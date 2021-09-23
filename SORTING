@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include<stdlib.h>
+#include<time.h>//time
+#include<unistd.h>//for sleep
 #define size 10
 //shell sort 
 void swap(int *x,int *y)
@@ -70,6 +72,52 @@ for(exp=1;m/exp>0;exp*=10)
 countSort(A,n,exp);	
 }	
 }
+//merge new technique-corrected
+void merge(int A[],int l,int h,int mid)   //we have to use mid otherwise 1 element will not get sorted and thius it will by default assign 0
+{
+	int B[20];
+	int i,j;
+//	int mid=(l+h)/2;
+	int k=mid+1;
+	i=l;
+   j=l;
+	while(i<=mid&&k<=h)
+	{
+		if(A[i]<A[k])
+		{
+			B[j++]=A[i++];
+	
+		}
+		else
+		{
+			B[j++]=A[k++];
+		}
+	}
+	for(;i<=mid;i++)
+	{
+	B[j++]=A[i];
+   }
+
+	for(;k<=h;k++)
+	B[j++]=A[k];
+	for(i=l;i<=h;i++)
+	{
+		A[i]=B[i];
+	}
+}
+void mergesort(int A[],int l,int h)
+{
+	int mid;
+	if(l<h)
+	{
+	    mid=(l+h)/2;
+	    
+		mergesort(A,l,mid);
+		mergesort(A,mid+1,h);
+		merge(A,l,h,mid);
+	}
+}
+/*
 //merge sort
 void merge(int A[],int lb,int mid,int up)
 {
@@ -123,28 +171,39 @@ void mergesort(int A[],int lb,int up)
 		mergesort(A,mid+1,up);
 		merge(A,lb,mid,up);
 	}
-}
-//insertion sort start
+}*/
+//insertion sort start-corrected
 void insertionSort(int n,int A[])
 {
-   int i;
-   for(i=0;i<n;i++)
+   int i,k;
+   for(i=1;i<n;i++)
    {
+   	printf("\nParse %d:-\n",i);
 	int x;
 	int j=i-1;
 	x=A[i];
-	while(j>=0 && A[j]>x)
+	while(j>-1&& A[j]>x)
 	{
 	A[j+1]=A[j];
 	j--;
    }
    A[j+1]=x;
+  for(k=0;k<n;k++)
+  {
+  	printf("%d",A[k]);
+  	if(k<n-1)
+  	{
+  		printf(",");
+	  }
+  }
  }
 }
-//Quick sort 
+//Quick sort -corrected
 int partition(int A[],int l,int h)
 {
 int pivot=A[l];
+printf("\nPivot is %d ",pivot);
+
 int i=l,j=h;
 do
 {
@@ -168,22 +227,37 @@ int j;
 if(l<h)
 {
 j=partition(A,l,h);
+printf("and index is %d \n",j);
 QuickSort(A,l,j);
 QuickSort(A,j+1,h);
 }
 }
-//bubble sort 
+//bubble sort -corrected
 void bubbleSort(int n,int A[])
 {
-int i,j;
+ time_t start, end;
+int i,k,j;
+ time(&start);
 for(i=0;i<n-1;i++)
 {
-for(j=0;j<n-1;j++)
+	
+for(j=0;j<n-1-i;j++)
 {
 if(A[j]>A[j+1])
 swap(&A[j],&A[j+1]);
 }
+printf("Pass %d :\n",i);
+for(k=0;k<n;k++)
+{
+	printf("%d",A[k]);
+	if(k<n-1)
+	printf(",");
 }
+printf("\n");
+}
+ time(&end);
+ float time=(float)end-start;
+printf("\nRuntime: %f",time);
 }
 //selection sort start
 void selectSort(int n,int A[])
@@ -250,7 +324,9 @@ A[i++]=j;
 }
 int main()
 {
+	time_t START,END;
 int n,i,j,c,p=1;
+int mid;
 printf("Enter the size of array: ");
 scanf("%d",&n);
 int A[n];
@@ -269,10 +345,10 @@ while(p)
 printf("\nMENU");
 printf("\n1.Shell Sort");
 printf("\n2.Radix Sort");
-printf("\n3.Merge Sort");
-printf("\n4.Insertion Sort");
+printf("\n3.Merge Sort"); //doing
+printf("\n4.Insertion Sort");//done
 printf("\n5.Quick Sort");
-printf("\n6.Bubble Sort");
+printf("\n6.Bubble Sort");//done
 printf("\n7.Selection Sort");
 printf("\n8.Heap Sort");
 printf("\n9.Exchange Sort");
@@ -297,12 +373,16 @@ printf("%d ",A[j]);
 }
 break;
 case 3:
-mergesort(A,0,n-1);//merge sort
+	time(&START);
+mergesort(A,0,n);//merge sort
+time(&END);
 printf("\nSorted array:-\n");
 for(j=0;j<n;j++)
 {
 printf("%d ",A[j]);
 }
+float est=(float)(END-START);
+printf("\nTime :%f\n",est);
 break;
 case 4:
 insertionSort(n,A);//insertion sort
@@ -313,12 +393,16 @@ printf("%d ",A[j]);
 }
 break;
 case 5://quick sort
+time(&START);
 QuickSort(A,0,n);
+time(&END);
 printf("\nSorted array:-\n");
 for(j=0;j<n;j++)
 {
 printf("%d ",A[j]);
 }
+float es=(float)(END-START);
+printf("\nTime is: %f",es);
 break;	
 case 6://bubble sort
 bubbleSort(n,A);
